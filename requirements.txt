@@ -1,0 +1,10 @@
+fastapi
+uvicorn[standard]
+sqlmodel
+pydantic[email]
+pydantic-settings
+PyJWT
+bcrypt
+# Postgres driver for production (Render). The marker skips it on 3.14 where
+# there's no wheel yet — local dev uses SQLite and doesn't need it.
+psycopg[binary]; python_version < "3.14"
