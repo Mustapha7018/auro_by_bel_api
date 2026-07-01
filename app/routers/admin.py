@@ -78,9 +78,18 @@ def list_categories(session: Session = Depends(get_session)):
 
 
 # ---------- bookings ----------
+def _booking_payload(b: Booking, session: Session) -> dict:
+    phone = None
+    if b.customer_id:
+        u = session.get(User, b.customer_id)
+        phone = u.phone if u else None
+    return {**b.model_dump(), "customer_phone": phone}
+
+
 @router.get("/bookings")
 def list_bookings(session: Session = Depends(get_session)):
-    return session.exec(select(Booking).order_by(Booking.date)).all()
+    rows = session.exec(select(Booking).order_by(Booking.date)).all()
+    return [_booking_payload(b, session) for b in rows]
 
 
 @router.patch("/bookings/{booking_id}")
@@ -92,7 +101,15 @@ def set_booking_status(booking_id: int, body: StatusIn, session: Session = Depen
     session.add(b)
     session.commit()
     session.refresh(b)
-    return b
+    return _booking_payload(b, session)
+
+
+@router.delete("/bookings/{booking_id}", status_code=204)
+def delete_booking(booking_id: int, session: Session = Depends(get_session)):
+    b = session.get(Booking, booking_id)
+    if b:
+        session.delete(b)
+        session.commit()
 
 
 # ---------- availability ----------

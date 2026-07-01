@@ -1,5 +1,6 @@
 """Response shaping — produces JSON the front-ends consume directly."""
 from .models import Order, Payment, Product, User
+from .pricing import deposit_for
 
 
 def product_public(p: Product, category_name: str | None = None) -> dict:
@@ -14,7 +15,7 @@ def product_public(p: Product, category_name: str | None = None) -> dict:
         "status": p.status,
         "price": p.price,
         "compareAt": p.compare_at,
-        "deposit": p.deposit,
+        "deposit": deposit_for(p.price),  # always one-third of the price
         "variant": p.variant,
         "description": p.description,
         "alt": p.description,  # storefront image alt

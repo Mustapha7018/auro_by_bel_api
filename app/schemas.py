@@ -20,6 +20,11 @@ class GoogleAuthIn(BaseModel):
     credential: str  # Google ID token from the Sign-in button
 
 
+class PasswordChangeIn(BaseModel):
+    current_password: str
+    new_password: str
+
+
 # ---- products (admin) ----
 class ProductIn(BaseModel):
     name: str

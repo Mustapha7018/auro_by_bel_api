@@ -5,6 +5,7 @@ from ..database import get_session
 from ..models import (
     Availability, Booking, Category, Favorite, Order, Payment, Product, User,
 )
+from ..pricing import deposit_for
 from ..schemas import BookingIn, OrderIn, UpdateMeIn
 from ..security import get_current_user
 from ..serializers import order_dict, product_public, user_public
@@ -86,10 +87,14 @@ def request_booking(body: BookingIn, user: User = Depends(get_current_user), ses
         user.phone = body.phone.strip()
         session.add(user)
 
+    # deposit is always one-third of the service price
+    product = session.get(Product, body.product_id) if body.product_id else None
+    deposit = deposit_for(product.price) if product else body.deposit
+
     booking = Booking(
         customer_id=user.id, customer_name=user.name, product_id=body.product_id,
         service=body.service, date=body.date, time=body.time,
-        deposit=body.deposit, status="requested",
+        deposit=deposit, status="requested",
     )
     session.add(booking)
     session.commit()
@@ -118,7 +123,10 @@ def checkout(body: OrderIn, user: User = Depends(get_current_user), session: Ses
         user.phone = body.phone.strip()
         session.add(user)
     total = sum(i.price * i.qty for i in body.items)
-    due_now = sum((i.price if i.mode == "full" else i.deposit) * i.qty for i in body.items)
+    # pay in full → whole price; pre-order → one-third deposit
+    due_now = sum(
+        (i.price if i.mode == "full" else deposit_for(i.price)) * i.qty for i in body.items
+    )
     order = Order(
         customer_id=user.id, customer_name=user.name, status="processing", total=total,
         items=[{"name": i.name, "mode": i.mode, "length": i.length, "qty": i.qty, "price": i.price}

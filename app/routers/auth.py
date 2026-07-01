@@ -6,7 +6,7 @@ from sqlmodel import Session, select
 from ..config import settings
 from ..database import get_session
 from ..models import User
-from ..schemas import GoogleAuthIn, LoginIn, RegisterIn
+from ..schemas import GoogleAuthIn, LoginIn, PasswordChangeIn, RegisterIn
 from ..security import (
     create_access_token, get_current_user, hash_password, verify_password,
 )
@@ -75,6 +75,22 @@ def google_sign_in(body: GoogleAuthIn, session: Session = Depends(get_session)):
         session.refresh(user)
 
     return _token_response(user)
+
+
+@router.post("/password")
+def change_password(
+    body: PasswordChangeIn,
+    user: User = Depends(get_current_user),
+    session: Session = Depends(get_session),
+):
+    if not verify_password(body.current_password, user.password_hash):
+        raise HTTPException(status_code=400, detail="Current password is incorrect.")
+    if len(body.new_password) < 6:
+        raise HTTPException(status_code=400, detail="New password must be at least 6 characters.")
+    user.password_hash = hash_password(body.new_password)
+    session.add(user)
+    session.commit()
+    return {"ok": True}
 
 
 @router.get("/me")
