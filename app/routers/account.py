@@ -5,12 +5,24 @@ from ..database import get_session
 from ..models import (
     Availability, Booking, Category, Favorite, Order, Payment, Product, User,
 )
-from ..schemas import BookingIn, OrderIn
+from ..schemas import BookingIn, OrderIn, UpdateMeIn
 from ..security import get_current_user
-from ..serializers import order_dict, product_public
+from ..serializers import order_dict, product_public, user_public
 from ..slots import day_slots
 
 router = APIRouter(prefix="/me", tags=["account"])
+
+
+@router.patch("")
+def update_me(body: UpdateMeIn, user: User = Depends(get_current_user), session: Session = Depends(get_session)):
+    if body.name is not None:
+        user.name = body.name.strip() or user.name
+    if body.phone is not None:
+        user.phone = body.phone.strip() or None
+    session.add(user)
+    session.commit()
+    session.refresh(user)
+    return user_public(user)
 
 
 # ---- favourites ----
@@ -70,6 +82,10 @@ def request_booking(body: BookingIn, user: User = Depends(get_current_user), ses
     if not slot or not slot["available"]:
         raise HTTPException(status_code=409, detail="That time is no longer available.")
 
+    if body.phone and body.phone.strip():
+        user.phone = body.phone.strip()
+        session.add(user)
+
     booking = Booking(
         customer_id=user.id, customer_name=user.name, product_id=body.product_id,
         service=body.service, date=body.date, time=body.time,
@@ -98,6 +114,9 @@ def my_orders(user: User = Depends(get_current_user), session: Session = Depends
 def checkout(body: OrderIn, user: User = Depends(get_current_user), session: Session = Depends(get_session)):
     if not body.items:
         raise HTTPException(status_code=400, detail="Your bag is empty.")
+    if body.phone and body.phone.strip():
+        user.phone = body.phone.strip()
+        session.add(user)
     total = sum(i.price * i.qty for i in body.items)
     due_now = sum((i.price if i.mode == "full" else i.deposit) * i.qty for i in body.items)
     order = Order(

@@ -61,6 +61,12 @@ class StockIn(BaseModel):
     stock: int
 
 
+# ---- profile ----
+class UpdateMeIn(BaseModel):
+    name: str | None = None
+    phone: str | None = None
+
+
 # ---- bookings ----
 class BookingIn(BaseModel):
     product_id: int | None = None
@@ -68,6 +74,7 @@ class BookingIn(BaseModel):
     date: date
     time: str
     deposit: float = 0
+    phone: str | None = None  # saved to the customer's profile if given
 
 
 class StatusIn(BaseModel):
@@ -87,6 +94,7 @@ class OrderItemIn(BaseModel):
 
 class OrderIn(BaseModel):
     items: list[OrderItemIn]
+    phone: str | None = None  # saved to the customer's profile if given
 
 
 class PaymentIn(BaseModel):
