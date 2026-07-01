@@ -70,22 +70,10 @@ def seed() -> None:
         if s.exec(select(User)).first():
             return  # already seeded
 
-        # --- admin + customers ---
+        # --- admin only (no demo customers/bookings/orders) ---
         s.add(User(name="Bel", email="bel@aurabybel.com", phone="024 000 0000",
                    password_hash=hash_password("studio"), role="admin"))
-        customers = [
-            User(name="Ama Mensah", email="ama.mensah@gmail.com", phone="024 555 0142",
-                 password_hash=hash_password("password"), created_at=_dt(-90)),
-            User(name="Akua Boateng", email="akua.b@gmail.com", phone="020 555 0199",
-                 password_hash=hash_password("password"), created_at=_dt(-60)),
-            User(name="Efua Owusu", email="efua.owusu@gmail.com", phone="055 555 0123",
-                 password_hash=hash_password("password"), created_at=_dt(-30)),
-        ]
-        for c in customers:
-            s.add(c)
         s.commit()
-        for c in customers:
-            s.refresh(c)
 
         # --- categories ---
         for i, (cid, name, mode, blurb, banner) in enumerate(CATEGORIES):
@@ -93,62 +81,18 @@ def seed() -> None:
         s.commit()
 
         # --- products ---
-        prod_by_name: dict[str, Product] = {}
         for (cat, name, typ, mode, status, price, comp, dep, variant, image, badge, stock, options) in PRODUCTS:
-            p = Product(
+            s.add(Product(
                 name=name, type=typ, category_id=cat, mode=mode, status=status,
                 price=price, compare_at=comp, deposit=dep, variant=variant,
                 image=image, badge=badge, stock=stock, options=options,
                 description=f"{name} — {variant}." if variant else name,
                 tags=[t for t in (typ.lower() if typ else "", status) if t],
-            )
-            s.add(p)
-            prod_by_name[name] = p
+            ))
         s.commit()
-        for p in prod_by_name.values():
-            s.refresh(p)
 
         # --- availability ---
         s.add(Availability(id=1))
-        s.commit()
-
-        # --- bookings ---
-        ama, akua, efua = customers
-        bookings = [
-            Booking(customer_id=ama.id, customer_name=ama.name, service="Frontal Install",
-                    product_id=prod_by_name["Frontal Install"].id, date=_day(1), time="11:00",
-                    deposit=70, status="confirmed", created_at=_dt(-2)),
-            Booking(customer_id=akua.id, customer_name=akua.name, service="Acrylic Full Set",
-                    product_id=prod_by_name["Acrylic Full Set"].id, date=_day(2), time="14:00",
-                    deposit=60, status="requested", created_at=_dt(-1)),
-            Booking(customer_id=efua.id, customer_name=efua.name, service="Volume Set",
-                    product_id=prod_by_name["Volume Set"].id, date=_day(3), time="10:00",
-                    deposit=80, status="requested", created_at=_dt(0)),
-        ]
-        for b in bookings:
-            s.add(b)
-
-        # --- orders + payments ---
-        o1 = Order(customer_id=ama.id, customer_name=ama.name, status="delivered", total=2000,
-                   items=[{"name": "HD Lace Frontal Wig", "mode": "full", "length": '20"', "qty": 1, "price": 2000}],
-                   created_at=_dt(-5))
-        o2 = Order(customer_id=akua.id, customer_name=akua.name, status="processing", total=3300,
-                   items=[
-                       {"name": "Raw SDD Bundles", "mode": "full", "length": '20"', "qty": 3, "price": 700},
-                       {"name": "Coloured Pixie Unit", "mode": "preorder", "length": '10"', "qty": 1, "price": 1200},
-                   ], created_at=_dt(-2))
-        for o in (o1, o2):
-            s.add(o)
-        s.commit()
-        s.refresh(o1)
-        s.refresh(o2)
-        s.add(Payment(order_id=o1.id, amount=2000, method="Mobile Money", note="Paid in full", ts=_dt(-5)))
-        s.add(Payment(order_id=o2.id, amount=2500, method="Mobile Money", note="Bundles + pixie deposit", ts=_dt(-2)))
-
-        # --- a couple of favourites for Ama ---
-        s.add(Favorite(user_id=ama.id, product_id=prod_by_name["Wispy Set"].id))
-        s.add(Favorite(user_id=ama.id, product_id=prod_by_name["HD Lace Frontal Wig"].id))
-
         s.commit()
 
 
