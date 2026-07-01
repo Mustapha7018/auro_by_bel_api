@@ -13,6 +13,9 @@ class Settings(BaseSettings):
     jwt_alg: str = "HS256"
     access_token_minutes: int = 60 * 24 * 7  # one week
 
+    # Google Sign-In (storefront customers). Set to your OAuth client ID.
+    google_client_id: str = ""
+
     # comma-separated list of allowed front-end origins
     cors_origins: str = (
         "http://localhost:5173,"

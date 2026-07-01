@@ -1,9 +1,12 @@
+import secrets
+
 from fastapi import APIRouter, Depends, HTTPException
 from sqlmodel import Session, select
 
+from ..config import settings
 from ..database import get_session
 from ..models import User
-from ..schemas import LoginIn, RegisterIn
+from ..schemas import GoogleAuthIn, LoginIn, RegisterIn
 from ..security import (
     create_access_token, get_current_user, hash_password, verify_password,
 )
@@ -34,6 +37,43 @@ def login(body: LoginIn, session: Session = Depends(get_session)):
     user = session.exec(select(User).where(User.email == body.email.lower())).first()
     if not user or not verify_password(body.password, user.password_hash):
         raise HTTPException(status_code=401, detail="Invalid email or password.")
+    return _token_response(user)
+
+
+@router.post("/google")
+def google_sign_in(body: GoogleAuthIn, session: Session = Depends(get_session)):
+    if not settings.google_client_id:
+        raise HTTPException(status_code=503, detail="Google sign-in is not configured.")
+
+    # verify the ID token with Google
+    from google.auth.transport import requests as g_requests
+    from google.oauth2 import id_token
+
+    try:
+        info = id_token.verify_oauth2_token(
+            body.credential, g_requests.Request(), settings.google_client_id
+        )
+    except ValueError:
+        raise HTTPException(status_code=401, detail="Invalid Google token.")
+
+    email = (info.get("email") or "").lower()
+    if not email or not info.get("email_verified", False):
+        raise HTTPException(status_code=401, detail="Google account email not verified.")
+
+    name = info.get("name") or info.get("given_name") or email.split("@")[0]
+
+    user = session.exec(select(User).where(User.email == email)).first()
+    if not user:
+        user = User(
+            name=name,
+            email=email,
+            password_hash=hash_password(secrets.token_urlsafe(24)),  # unusable password
+            role="customer",
+        )
+        session.add(user)
+        session.commit()
+        session.refresh(user)
+
     return _token_response(user)
 
 

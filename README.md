@@ -87,6 +87,9 @@ and a web service, wiring `DATABASE_URL` and generating a `JWT_SECRET` automatic
    Render then provisions SSL.
 
 Notes:
+- **Google Sign-In:** set env var `GOOGLE_CLIENT_ID` (the OAuth client ID) on the
+  `aura-api` service so `POST /auth/google` can verify tokens. The storefront uses the
+  same ID via `VITE_GOOGLE_CLIENT_ID`.
 - Free tier web services **sleep after ~15 min idle** (first request after is slow) and
   free Postgres has size/retention limits — fine to start; upgrade when it matters.
 - The Postgres driver (`psycopg`) installs only in prod (Python < 3.14); local dev uses SQLite.
