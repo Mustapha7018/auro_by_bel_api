@@ -5,7 +5,7 @@ from sqlmodel import Session, select
 
 from ..database import get_session
 from ..models import (
-    Availability, Booking, Category, Favorite, Order, Payment, Product, User,
+    Availability, Booking, Category, Order, Payment, Product, User,
 )
 from ..schemas import (
     AvailabilityIn, PaymentIn, ProductIn, ProductUpdate, StatusIn, StockIn,
@@ -18,25 +18,6 @@ router = APIRouter(prefix="/admin", tags=["admin"], dependencies=[Depends(requir
 
 def _names(session: Session) -> dict[str, str]:
     return {c.id: c.name for c in session.exec(select(Category)).all()}
-
-
-# ---------- one-time maintenance: clear demo transactional data ----------
-@router.post("/reset-demo")
-def reset_demo(session: Session = Depends(get_session)):
-    """Delete demo bookings/orders/payments/favourites and all non-admin users.
-    Keeps products, categories, availability and the admin account."""
-    deleted = {}
-    for model in (Payment, Order, Favorite, Booking):
-        rows = session.exec(select(model)).all()
-        deleted[model.__name__] = len(rows)
-        for r in rows:
-            session.delete(r)
-    users = session.exec(select(User).where(User.role != "admin")).all()
-    deleted["User"] = len(users)
-    for u in users:
-        session.delete(u)
-    session.commit()
-    return {"ok": True, "deleted": deleted}
 
 
 # ---------- products ----------
