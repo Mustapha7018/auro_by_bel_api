@@ -31,6 +31,7 @@ def order_dict(o: Order, payments: list[Payment]) -> dict:
     paid = sum(p.amount for p in payments)
     return {
         "id": o.id,
+        "ref": o.ref,
         "customerId": o.customer_id,
         "customerName": o.customer_name,
         "status": o.status,

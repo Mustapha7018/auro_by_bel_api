@@ -1,11 +1,19 @@
+import secrets
 from datetime import date, datetime, timezone
 
 from sqlalchemy import JSON, Column, UniqueConstraint
 from sqlmodel import Field, SQLModel
 
+# unambiguous alphabet (no I/O/0/1/L) for human-readable references
+_REF_ALPHABET = "ABCDEFGHJKMNPQRSTUVWXYZ23456789"
+
 
 def utcnow() -> datetime:
     return datetime.now(timezone.utc)
+
+
+def gen_ref() -> str:
+    return "".join(secrets.choice(_REF_ALPHABET) for _ in range(6))
 
 
 class User(SQLModel, table=True):
@@ -76,6 +84,7 @@ class Booking(SQLModel, table=True):
 class Order(SQLModel, table=True):
     __tablename__ = "orders"
     id: int | None = Field(default=None, primary_key=True)
+    ref: str = Field(default_factory=gen_ref, index=True)  # public, non-sequential order code
     customer_id: int | None = Field(default=None, foreign_key="users.id", index=True)
     customer_name: str
     status: str = "processing"  # processing | delivered | cancelled
