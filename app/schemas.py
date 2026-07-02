@@ -66,6 +66,12 @@ class StockIn(BaseModel):
     stock: int
 
 
+class CategoryUpdate(BaseModel):
+    name: str | None = None
+    blurb: str | None = None
+    banner: str | None = None
+
+
 # ---- profile ----
 class UpdateMeIn(BaseModel):
     name: str | None = None

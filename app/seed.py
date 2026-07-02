@@ -16,16 +16,18 @@ def _day(offset: int) -> date:
     return date.today() + timedelta(days=offset)
 
 
+_BANNER = "https://pub-69368580dd674d118e13d0367045df9a.r2.dev/display"
+
 CATEGORIES = [
-    ("wig-installation", "Wig Installation", "appointment", "Scalp-melting installs finished to your hairline.", "/images/img2.jpg"),
-    ("wig-making", "Wig Making", "shop", "Hand-built units, made to your measurements.", "/images/img5.jpg"),
-    ("revamping", "Revamping", "appointment", "Tired units brought back to a salon-fresh finish.", "/images/img7.jpg"),
-    ("pedicure", "Pedicure", "appointment", "Restoring soaks and a flawless finish.", "/images/p2.jpg"),
-    ("nails", "Nails", "appointment", "Sculpted, structured and sealed to last.", "/images/nail2.jpg"),
-    ("lash-extensions", "Lash Extensions", "appointment", "Seven signature sets, mapped to your eye shape.", "/images/wispy.jpg"),
-    ("microblading", "Microblading", "appointment", "Semi-permanent brows mapped to your bone structure.", "/images/ombre_brows.jpg"),
-    ("piercing", "Piercing", "appointment", "Precise placement, sterile single-use needles.", "/images/ear2.jpg"),
-    ("retail", "Wigs & Bundles", "shop", "Single-donor raw hair and ready-to-wear units, shipped worldwide.", "/images/img4.jpg"),
+    ("wig-installation", "Wig Installation", "appointment", "Scalp-melting installs finished to your hairline.", f"{_BANNER}/wig_installation.jpg"),
+    ("wig-making", "Wig Making", "shop", "Hand-built units, made to your measurements.", f"{_BANNER}/wig_making.jpg"),
+    ("revamping", "Revamping", "appointment", "Tired units brought back to a salon-fresh finish.", f"{_BANNER}/revamping.jpg"),
+    ("pedicure", "Pedicure", "appointment", "Restoring soaks and a flawless finish.", f"{_BANNER}/pedicure.jpg"),
+    ("nails", "Nails", "appointment", "Sculpted, structured and sealed to last.", f"{_BANNER}/nails.jpg"),
+    ("lash-extensions", "Lash Extensions", "appointment", "Seven signature sets, mapped to your eye shape.", f"{_BANNER}/lash_extension.jpg"),
+    ("microblading", "Microblading", "appointment", "Semi-permanent brows mapped to your bone structure.", f"{_BANNER}/microblading.jpg"),
+    ("piercing", "Piercing", "appointment", "Precise placement, sterile single-use needles.", f"{_BANNER}/piercing.jpg"),
+    ("retail", "Wigs & Bundles", "shop", "Single-donor raw hair and ready-to-wear units, shipped worldwide.", f"{_BANNER}/wig_and_bundles.jpg"),
 ]
 
 # (category_id, name, type, mode, status, price, compare_at, deposit, variant, badge, stock, options)

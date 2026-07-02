@@ -10,7 +10,7 @@ from ..models import (
     Availability, Booking, Category, Favorite, Order, Payment, Product, User,
 )
 from ..schemas import (
-    AvailabilityIn, PaymentIn, ProductIn, ProductUpdate, StatusIn, StockIn,
+    AvailabilityIn, CategoryUpdate, PaymentIn, ProductIn, ProductUpdate, StatusIn, StockIn,
 )
 from ..security import require_admin
 from ..serializers import order_dict, product_public, user_public
@@ -25,10 +25,10 @@ def _names(session: Session) -> dict[str, str]:
 # ---------- reset test activity (keeps products/categories/availability/admin) ----------
 @router.post("/reset")
 def reset_activity(session: Session = Depends(get_session)):
-    """Clear all orders, payments, bookings, favourites and non-admin customers.
-    Products, categories, availability and admin accounts are kept."""
+    """Clear all products, orders, payments, bookings, favourites and non-admin
+    customers. Categories, availability and admin accounts are kept."""
     deleted = {}
-    for model in (Payment, Order, Favorite, Booking):
+    for model in (Payment, Order, Favorite, Booking, Product):
         rows = session.exec(select(model)).all()
         deleted[model.__name__] = len(rows)
         for r in rows:
@@ -114,6 +114,19 @@ def delete_product(product_id: int, session: Session = Depends(get_session)):
 @router.get("/categories")
 def list_categories(session: Session = Depends(get_session)):
     return session.exec(select(Category).order_by(Category.order_index)).all()
+
+
+@router.patch("/categories/{category_id}")
+def update_category(category_id: str, body: CategoryUpdate, session: Session = Depends(get_session)):
+    c = session.get(Category, category_id)
+    if not c:
+        raise HTTPException(status_code=404, detail="Category not found")
+    for k, v in body.model_dump(exclude_unset=True).items():
+        setattr(c, k, v)
+    session.add(c)
+    session.commit()
+    session.refresh(c)
+    return c
 
 
 # ---------- bookings ----------
