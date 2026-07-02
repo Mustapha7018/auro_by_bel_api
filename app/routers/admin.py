@@ -7,7 +7,7 @@ from .. import storage
 
 from ..database import get_session
 from ..models import (
-    Availability, Booking, Category, Favorite, Order, Payment, Product, User,
+    Availability, Booking, Category, Favorite, GalleryItem, Order, Payment, Product, User,
 )
 from ..schemas import (
     AvailabilityIn, CategoryUpdate, PaymentIn, ProductIn, ProductUpdate, StatusIn, StockIn,
@@ -57,6 +57,43 @@ async def upload_image(file: UploadFile = File(...)):
         raise HTTPException(status_code=413, detail="Image is too large (max 5 MB).")
     url = storage.upload_image(data, file.content_type)
     return {"url": url}
+
+
+# ---------- gallery (Bel's creations) ----------
+_ALLOWED_MEDIA = _ALLOWED_IMAGE | {"video/mp4", "video/quicktime", "video/webm"}
+_MAX_MEDIA = 60 * 1024 * 1024  # 60 MB — short clips
+
+
+@router.get("/gallery")
+def list_gallery(session: Session = Depends(get_session)):
+    rows = session.exec(select(GalleryItem).order_by(GalleryItem.id.desc())).all()
+    return [{"id": g.id, "kind": g.kind, "url": g.url} for g in rows]
+
+
+@router.post("/gallery", status_code=201)
+async def add_gallery_item(file: UploadFile = File(...), session: Session = Depends(get_session)):
+    if not storage.is_configured():
+        raise HTTPException(status_code=503, detail="Object storage is not configured.")
+    if file.content_type not in _ALLOWED_MEDIA:
+        raise HTTPException(status_code=400, detail="Please upload a JPG, PNG, WEBP image or an MP4/MOV/WEBM video.")
+    data = await file.read()
+    if len(data) > _MAX_MEDIA:
+        raise HTTPException(status_code=413, detail="File is too large (max 60 MB).")
+    url = storage.upload_media(data, file.content_type, folder="gallery")
+    kind = "video" if file.content_type.startswith("video/") else "image"
+    item = GalleryItem(kind=kind, url=url)
+    session.add(item)
+    session.commit()
+    session.refresh(item)
+    return {"id": item.id, "kind": item.kind, "url": item.url}
+
+
+@router.delete("/gallery/{item_id}", status_code=204)
+def delete_gallery_item(item_id: int, session: Session = Depends(get_session)):
+    item = session.get(GalleryItem, item_id)
+    if item:
+        session.delete(item)
+        session.commit()
 
 
 # ---------- products ----------

@@ -4,11 +4,18 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlmodel import Session, select
 
 from ..database import get_session
-from ..models import Availability, Booking, Category, Product
+from ..models import Availability, Booking, Category, GalleryItem, Product
 from ..serializers import product_public
 from ..slots import day_slots
 
 router = APIRouter(tags=["public"])
+
+
+@router.get("/gallery")
+def gallery(session: Session = Depends(get_session)):
+    """Bel's creations — newest first."""
+    rows = session.exec(select(GalleryItem).order_by(GalleryItem.id.desc())).all()
+    return [{"id": g.id, "kind": g.kind, "url": g.url} for g in rows]
 
 
 def _category_names(session: Session) -> dict[str, str]:

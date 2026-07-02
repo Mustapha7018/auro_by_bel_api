@@ -103,6 +103,14 @@ class Payment(SQLModel, table=True):
     ts: datetime = Field(default_factory=utcnow)
 
 
+class GalleryItem(SQLModel, table=True):
+    __tablename__ = "gallery"
+    id: int | None = Field(default=None, primary_key=True)
+    kind: str = "image"  # image | video
+    url: str
+    created_at: datetime = Field(default_factory=utcnow)
+
+
 class Favorite(SQLModel, table=True):
     __tablename__ = "favorites"
     __table_args__ = (UniqueConstraint("user_id", "product_id", name="uq_fav"),)

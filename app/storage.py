@@ -3,7 +3,14 @@ import uuid
 
 from .config import settings
 
-EXT_BY_TYPE = {"image/jpeg": "jpg", "image/png": "png", "image/webp": "webp"}
+EXT_BY_TYPE = {
+    "image/jpeg": "jpg",
+    "image/png": "png",
+    "image/webp": "webp",
+    "video/mp4": "mp4",
+    "video/quicktime": "mov",
+    "video/webm": "webm",
+}
 
 
 def is_configured() -> bool:
@@ -30,10 +37,10 @@ def _client():
     )
 
 
-def upload_image(data: bytes, content_type: str) -> str:
-    """Store the bytes and return the public URL."""
-    ext = EXT_BY_TYPE.get(content_type, "jpg")
-    key = f"products/{uuid.uuid4().hex}.{ext}"
+def upload_media(data: bytes, content_type: str, folder: str = "products") -> str:
+    """Store the bytes under the given folder and return the public URL."""
+    ext = EXT_BY_TYPE.get(content_type, "bin")
+    key = f"{folder}/{uuid.uuid4().hex}.{ext}"
     _client().put_object(
         Bucket=settings.s3_bucket,
         Key=key,
@@ -42,3 +49,7 @@ def upload_image(data: bytes, content_type: str) -> str:
         CacheControl="public, max-age=31536000, immutable",
     )
     return f"{settings.s3_public_base.rstrip('/')}/{key}"
+
+
+def upload_image(data: bytes, content_type: str) -> str:
+    return upload_media(data, content_type, folder="products")
