@@ -1,7 +1,5 @@
 from datetime import datetime, timezone
 
-import base64
-
 from fastapi import APIRouter, Depends, File, HTTPException, UploadFile
 from sqlmodel import Session, select
 
@@ -46,23 +44,6 @@ def reset_activity(session: Session = Depends(get_session)):
 # ---------- image upload ----------
 _ALLOWED_IMAGE = {"image/jpeg", "image/png", "image/webp"}
 _MAX_UPLOAD = 5 * 1024 * 1024  # 5 MB
-
-
-@router.post("/migrate-images")
-def migrate_images(session: Session = Depends(get_session)):
-    """One-time: move inline data-URL product images into object storage."""
-    if not storage.is_configured():
-        raise HTTPException(status_code=503, detail="Object storage is not configured.")
-    migrated = 0
-    for p in session.exec(select(Product)).all():
-        if p.image and p.image.startswith("data:"):
-            header, b64 = p.image.split(",", 1)
-            content_type = header[len("data:"):].split(";")[0]
-            p.image = storage.upload_image(base64.b64decode(b64), content_type)
-            session.add(p)
-            migrated += 1
-    session.commit()
-    return {"migrated": migrated}
 
 
 @router.post("/upload")
