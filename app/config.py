@@ -17,7 +17,6 @@ class Settings(BaseSettings):
     google_client_id: str = ""
 
     # Object storage for product images (S3-compatible: Cloudflare R2, S3, B2).
-    # Leave blank to keep storing images inline (data URLs).
     s3_endpoint: str = ""     # e.g. https://<accountid>.r2.cloudflarestorage.com
     s3_bucket: str = ""
     s3_access_key: str = ""

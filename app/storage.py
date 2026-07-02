@@ -1,7 +1,4 @@
-"""Object storage for product images (S3-compatible: Cloudflare R2, AWS S3, B2).
-
-Configured via env (see config.py). When unset, `is_configured()` is False and
-the app keeps storing images inline as data URLs."""
+"""Object storage for product images (S3-compatible: Cloudflare R2, AWS S3, B2)."""
 import uuid
 
 from .config import settings
