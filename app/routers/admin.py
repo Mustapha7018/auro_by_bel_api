@@ -1,7 +1,9 @@
 from datetime import datetime, timezone
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, File, HTTPException, UploadFile
 from sqlmodel import Session, select
+
+from .. import storage
 
 from ..database import get_session
 from ..models import (
@@ -37,6 +39,24 @@ def reset_activity(session: Session = Depends(get_session)):
         session.delete(u)
     session.commit()
     return {"ok": True, "deleted": deleted}
+
+
+# ---------- image upload ----------
+_ALLOWED_IMAGE = {"image/jpeg", "image/png", "image/webp"}
+_MAX_UPLOAD = 5 * 1024 * 1024  # 5 MB
+
+
+@router.post("/upload")
+async def upload_image(file: UploadFile = File(...)):
+    if not storage.is_configured():
+        raise HTTPException(status_code=503, detail="Object storage is not configured.")
+    if file.content_type not in _ALLOWED_IMAGE:
+        raise HTTPException(status_code=400, detail="Please upload a JPG, PNG or WEBP image.")
+    data = await file.read()
+    if len(data) > _MAX_UPLOAD:
+        raise HTTPException(status_code=413, detail="Image is too large (max 5 MB).")
+    url = storage.upload_image(data, file.content_type)
+    return {"url": url}
 
 
 # ---------- products ----------

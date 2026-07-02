@@ -16,6 +16,15 @@ class Settings(BaseSettings):
     # Google Sign-In (storefront customers). Set to your OAuth client ID.
     google_client_id: str = ""
 
+    # Object storage for product images (S3-compatible: Cloudflare R2, S3, B2).
+    # Leave blank to keep storing images inline (data URLs).
+    s3_endpoint: str = ""     # e.g. https://<accountid>.r2.cloudflarestorage.com
+    s3_bucket: str = ""
+    s3_access_key: str = ""
+    s3_secret_key: str = ""
+    s3_public_base: str = ""  # public base URL, e.g. https://img.aurabybel.shop
+    s3_region: str = "auto"
+
     # comma-separated list of allowed front-end origins
     cors_origins: str = (
         "http://localhost:5173,"
