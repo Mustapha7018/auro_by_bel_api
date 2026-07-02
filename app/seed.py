@@ -28,40 +28,41 @@ CATEGORIES = [
     ("retail", "Wigs & Bundles", "shop", "Single-donor raw hair and ready-to-wear units, shipped worldwide.", "/images/img4.jpg"),
 ]
 
-# (category_id, name, type, mode, status, price, compare_at, deposit, variant, image, badge, stock, options)
+# (category_id, name, type, mode, status, price, compare_at, deposit, variant, badge, stock, options)
+# Images are added per product from the dashboard, so the seed leaves them blank.
 PRODUCTS = [
-    ("wig-installation", "Frontal Install", "Other", "appointment", "instock", 200, None, 70, "13×4 / 13×6 lace", "/images/install-frontal.jpg", "Popular", None, None),
-    ("wig-installation", "Closure Install", "Other", "appointment", "instock", 150, None, 50, "4×4 / 5×5 lace", "/images/install-closure.jpg", None, None, None),
-    ("wig-installation", "360 Install", "Other", "appointment", "instock", 250, None, 80, "Full perimeter", "/images/install-360.jpg", None, None, None),
+    ("wig-installation", "Frontal Install", "Other", "appointment", "instock", 200, None, 70, "13×4 / 13×6 lace", "Popular", None, None),
+    ("wig-installation", "Closure Install", "Other", "appointment", "instock", 150, None, 50, "4×4 / 5×5 lace", None, None, None),
+    ("wig-installation", "360 Install", "Other", "appointment", "instock", 250, None, 80, "Full perimeter", None, None, None),
 
-    ("wig-making", "Frontal Unit", "Wig", "shop", "preorder", 850, None, 300, "Made to order", "/images/img1.jpg", "Made to order", 0, {"label": "Density", "values": ["150%", "180%", "200%"]}),
-    ("wig-making", "Full Lace Unit", "Wig", "shop", "preorder", 1500, None, 500, "Hand-ventilated", "/images/img3.jpg", "Premium", 0, {"label": "Density", "values": ["180%", "200%"]}),
+    ("wig-making", "Frontal Unit", "Wig", "shop", "preorder", 850, None, 300, "Made to order", "Made to order", 0, {"label": "Density", "values": ["150%", "180%", "200%"]}),
+    ("wig-making", "Full Lace Unit", "Wig", "shop", "preorder", 1500, None, 500, "Hand-ventilated", "Premium", 0, {"label": "Density", "values": ["180%", "200%"]}),
 
-    ("revamping", "Wash & Restyle", "Other", "appointment", "instock", 80, None, 30, "Detangle & set", "/images/img2.jpg", None, None, None),
-    ("revamping", "Deep Restore", "Other", "appointment", "instock", 150, None, 50, "Mask & revive", "/images/img6.jpg", "Popular", None, None),
+    ("revamping", "Wash & Restyle", "Other", "appointment", "instock", 80, None, 30, "Detangle & set", None, None, None),
+    ("revamping", "Deep Restore", "Other", "appointment", "instock", 150, None, 50, "Mask & revive", "Popular", None, None),
 
-    ("pedicure", "Classic Pedicure", "Pedicure", "appointment", "instock", 80, None, 25, "Soak, file & polish", "/images/p1.webp", None, None, None),
-    ("pedicure", "Luxury Spa Pedicure", "Pedicure", "appointment", "instock", 200, None, 60, "Scrub, mask & massage", "/images/p3.jpg", "Popular", None, None),
+    ("pedicure", "Classic Pedicure", "Pedicure", "appointment", "instock", 80, None, 25, "Soak, file & polish", None, None, None),
+    ("pedicure", "Luxury Spa Pedicure", "Pedicure", "appointment", "instock", 200, None, 60, "Scrub, mask & massage", "Popular", None, None),
 
-    ("nails", "Builder Gel Full Set", "Nails", "appointment", "instock", 150, None, 50, "Natural overlay", "/images/nail1.jpg", "Popular", None, None),
-    ("nails", "Acrylic Full Set", "Nails", "appointment", "instock", 180, None, 60, "Sculpted extension", "/images/nail2.jpg", None, None, None),
-    ("nails", "Nail Art Set", "Nails", "appointment", "instock", 220, None, 70, "Custom design", "/images/nail4.png", "Custom", None, None),
+    ("nails", "Builder Gel Full Set", "Nails", "appointment", "instock", 150, None, 50, "Natural overlay", "Popular", None, None),
+    ("nails", "Acrylic Full Set", "Nails", "appointment", "instock", 180, None, 60, "Sculpted extension", None, None, None),
+    ("nails", "Nail Art Set", "Nails", "appointment", "instock", 220, None, 70, "Custom design", "Custom", None, None),
 
-    ("lash-extensions", "Classic Set", "Lashes", "appointment", "instock", 150, None, 50, "1:1 natural", "/images/classic_eye_lash.jpg", None, None, None),
-    ("lash-extensions", "Volume Set", "Lashes", "appointment", "instock", 250, 300, 80, "Handmade fans", "/images/volume.webp", "Sale", None, None),
-    ("lash-extensions", "Wispy Set", "Lashes", "appointment", "instock", 230, None, 70, "Textured & fluttery", "/images/wispy.jpg", "Popular", None, None),
+    ("lash-extensions", "Classic Set", "Lashes", "appointment", "instock", 150, None, 50, "1:1 natural", None, None, None),
+    ("lash-extensions", "Volume Set", "Lashes", "appointment", "instock", 250, 300, 80, "Handmade fans", "Sale", None, None),
+    ("lash-extensions", "Wispy Set", "Lashes", "appointment", "instock", 230, None, 70, "Textured & fluttery", "Popular", None, None),
 
-    ("microblading", "Microblading", "Brows", "appointment", "instock", 600, None, 200, "Hair strokes", "/images/microblading.jpg", "Incl. touch-up", None, None),
-    ("microblading", "Ombré Powder Brows", "Brows", "appointment", "instock", 800, None, 250, "Soft gradient", "/images/ombre_brows.jpg", "Popular", None, None),
+    ("microblading", "Microblading", "Brows", "appointment", "instock", 600, None, 200, "Hair strokes", "Incl. touch-up", None, None),
+    ("microblading", "Ombré Powder Brows", "Brows", "appointment", "instock", 800, None, 250, "Soft gradient", "Popular", None, None),
 
-    ("piercing", "Nostril Piercing", "Piercing", "appointment", "instock", 120, None, 40, "Stud or hoop", "/images/nose1.webp", None, None, None),
-    ("piercing", "Belly Piercing", "Piercing", "appointment", "instock", 180, None, 60, "Navel · jewellery incl.", "/images/belly1.jpg", "Popular", None, None),
-    ("piercing", "Ear Piercing", "Piercing", "appointment", "instock", 100, None, 30, "Lobe to helix", "/images/ear1.jpg", None, None, None),
+    ("piercing", "Nostril Piercing", "Piercing", "appointment", "instock", 120, None, 40, "Stud or hoop", None, None, None),
+    ("piercing", "Belly Piercing", "Piercing", "appointment", "instock", 180, None, 60, "Navel · jewellery incl.", "Popular", None, None),
+    ("piercing", "Ear Piercing", "Piercing", "appointment", "instock", 100, None, 30, "Lobe to helix", None, None, None),
 
-    ("retail", "Raw SDD Bundles", "Bundle", "shop", "instock", 700, None, 250, "Straight · natural black", "/images/img1.jpg", "Best seller", 14, {"label": "Length", "values": ['16"', '18"', '20"', '22"', '24"']}),
-    ("retail", "HD Lace Frontal Wig", "Wig", "shop", "instock", 2000, 2400, 700, "Body wave · 180%", "/images/img4.jpg", None, 6, {"label": "Length", "values": ['18"', '20"', '22"', '26"']}),
-    ("retail", "Glueless 5×5 Closure Wig", "Wig", "shop", "instock", 1800, None, 600, "Deep curl · 200%", "/images/img3.jpg", "Low stock", 2, {"label": "Length", "values": ['16"', '18"', '20"']}),
-    ("retail", "Coloured Pixie Unit", "Wig", "shop", "preorder", 1200, None, 400, "Honey blonde · pre-styled", "/images/img8.jpg", "Made to order", 0, {"label": "Length", "values": ['8"', '10"']}),
+    ("retail", "Raw SDD Bundles", "Bundle", "shop", "instock", 700, None, 250, "Straight · natural black", "Best seller", 14, {"label": "Length", "values": ['16"', '18"', '20"', '22"', '24"']}),
+    ("retail", "HD Lace Frontal Wig", "Wig", "shop", "instock", 2000, 2400, 700, "Body wave · 180%", None, 6, {"label": "Length", "values": ['18"', '20"', '22"', '26"']}),
+    ("retail", "Glueless 5×5 Closure Wig", "Wig", "shop", "instock", 1800, None, 600, "Deep curl · 200%", "Low stock", 2, {"label": "Length", "values": ['16"', '18"', '20"']}),
+    ("retail", "Coloured Pixie Unit", "Wig", "shop", "preorder", 1200, None, 400, "Honey blonde · pre-styled", "Made to order", 0, {"label": "Length", "values": ['8"', '10"']}),
 ]
 
 
@@ -81,11 +82,11 @@ def seed() -> None:
         s.commit()
 
         # --- products ---
-        for (cat, name, typ, mode, status, price, comp, dep, variant, image, badge, stock, options) in PRODUCTS:
+        for (cat, name, typ, mode, status, price, comp, dep, variant, badge, stock, options) in PRODUCTS:
             s.add(Product(
                 name=name, type=typ, category_id=cat, mode=mode, status=status,
                 price=price, compare_at=comp, deposit=dep, variant=variant,
-                image=image, badge=badge, stock=stock, options=options,
+                badge=badge, stock=stock, options=options,
                 description=f"{name} — {variant}." if variant else name,
                 tags=[t for t in (typ.lower() if typ else "", status) if t],
             ))
